@@ -1,4 +1,5 @@
+.gitignore
 .ipynb_checkpoints/
+__pycache__/
 .tempfile
 .workspace-config.json
-
