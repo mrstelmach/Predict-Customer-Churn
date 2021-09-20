@@ -7,7 +7,12 @@ Author: Marek Stelmach
 Date: Spetember, 2021
 """
 
+import os
+os.environ['QT_QPA_PLATFORM']='offscreen'
+
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def import_data(pth):
@@ -19,21 +24,37 @@ def import_data(pth):
     output:
             df: pandas dataframe
     '''
-    df = pd.read_csv(path)
+    df = pd.read_csv(pth)
     
     return df
 
 
-def perform_eda(df):
+def perform_eda(df, cat_col, qnt_col, corr_heatmap=True):
     '''
     perform eda on df and save figures to images folder
     input:
             df: pandas dataframe
+            cat_col: column name with categorical variable for bar plot
+            qnt_col: column name with quantitative variable for histogram
+            corr_heatmap: if True, a heatmap with correlation matrix is stored
 
     output:
             None
     '''
-    pass
+    plt.figure(figsize=(20, 10))
+    df[cat_col].value_counts('normalize').plot(kind='bar')
+    plt.savefig("./images/eda/{}_cat_plot.png".format(cat_col))
+    plt.close()
+    
+    plt.figure(figsize=(20,10)) 
+    df[qnt_col].hist();
+    plt.savefig("./images/eda/{}_qnt_plot.png".format(qnt_col))
+    plt.close()
+    
+    plt.figure(figsize=(20,10)) 
+    sns.heatmap(df.corr(), annot=False, cmap='Dark2_r', linewidths=2)
+    plt.savefig("./images/eda/corr_plot.png")
+    plt.close()
 
 
 def encoder_helper(df, category_lst, response):
@@ -116,3 +137,11 @@ def train_models(X_train, X_test, y_train, y_test):
               None
     '''
     pass
+
+
+if __name__ == '__main__':
+    churn_data = import_data("./data/bank_data.csv")
+    churn_data['Churn'] = churn_data['Attrition_Flag'].apply(
+        lambda val: 0 if val == "Existing Customer" else 1)
+    perform_eda(df=churn_data, cat_col='Marital_Status', 
+                qnt_col='Customer_Age', corr_heatmap=True)
