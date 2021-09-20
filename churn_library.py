@@ -1,9 +1,13 @@
-# library doc string
+# -*- coding: utf-8 -*-
+"""
+This module contains a set of functions for performing customer 
+churn prediction analysis.
 
+Author: Marek Stelmach
+Date: Spetember, 2021
+"""
 
-# import libraries
-
-
+import pandas as pd
 
 
 def import_data(pth):
@@ -14,8 +18,8 @@ def import_data(pth):
             pth: a path to the csv
     output:
             df: pandas dataframe
-    '''	
-	df = pd.read_csv(path)
+    '''
+    df = pd.read_csv(path)
     
     return df
 
@@ -29,7 +33,7 @@ def perform_eda(df):
     output:
             None
     '''
-	pass
+    pass
 
 
 def encoder_helper(df, category_lst, response):
@@ -60,6 +64,8 @@ def perform_feature_engineering(df, response):
               y_train: y training data
               y_test: y testing data
     '''
+    pass
+
 
 def classification_report_image(y_train,
                                 y_test,
@@ -96,6 +102,7 @@ def feature_importance_plot(model, X_data, output_pth):
              None
     '''
     pass
+
 
 def train_models(X_train, X_test, y_train, y_test):
     '''
