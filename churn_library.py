@@ -51,10 +51,11 @@ def perform_eda(df, cat_col, qnt_col, corr_heatmap=True):
     plt.savefig("./images/eda/{}_qnt_plot.png".format(qnt_col))
     plt.close()
     
-    plt.figure(figsize=(20,10)) 
-    sns.heatmap(df.corr(), annot=False, cmap='Dark2_r', linewidths=2)
-    plt.savefig("./images/eda/corr_plot.png")
-    plt.close()
+    if corr_heatmap:
+        plt.figure(figsize=(20,10)) 
+        sns.heatmap(df.corr(), annot=False, cmap='Dark2_r', linewidths=2)
+        plt.savefig("./images/eda/corr_plot.png")
+        plt.close()
 
 
 def encoder_helper(df, category_lst, response):
