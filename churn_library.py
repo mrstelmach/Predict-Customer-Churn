@@ -186,4 +186,5 @@ if __name__ == '__main__':
     churn_data = encoder_helper(churn_data, cat_columns, 'Churn')
     
     columns_to_drop = ['Unnamed: 0', 'CLIENTNUM', 'Attrition_Flag']
-    perform_feature_engineering(churn_data, 'Churn', drop_cols=columns_to_drop)
+    X_train, X_test, y_train, y_test = perform_feature_engineering(
+        churn_data, 'Churn', drop_cols=columns_to_drop)
