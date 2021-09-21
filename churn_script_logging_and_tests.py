@@ -6,6 +6,7 @@ Author: Marek Stelmach
 Date: Spetember, 2021
 """
 
+import glob
 import logging
 import os
 
@@ -41,7 +42,16 @@ def test_eda(perform_eda):
     '''
     test perform eda function
     '''
-    pass
+    df = cls.import_data("./data/bank_data.csv")
+    try:
+        perform_eda(df, 'Marital_Status', 'Customer_Age', 
+                    corr_heatmap=True)
+        num_plots = len(glob.glob("./images/eda/*.png"))
+        assert num_plots == 3
+        logging.info("Testing perform_eda: SUCCESS")
+    except AssertionError as err:
+        logging.error("Testing perform_eda: Three png plots required, found {}".format(num_plots))
+        raise err
 
 
 def test_encoder_helper(encoder_helper):
@@ -67,11 +77,4 @@ def test_train_models(train_models):
 
 if __name__ == "__main__":
     test_import(cls.import_data)
-
-
-
-
-
-
-
-
+    test_eda(cls.perform_eda)
