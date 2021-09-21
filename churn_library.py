@@ -13,6 +13,7 @@ os.environ['QT_QPA_PLATFORM']='offscreen'
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.model_selection import train_test_split
 
 
 def import_data(pth):
@@ -87,12 +88,15 @@ def encoder_helper(df, category_lst, response, drop_cat=True):
     return df
 
 
-def perform_feature_engineering(df, response, drop_cols=None):
+def perform_feature_engineering(df, response, drop_cols=None, 
+                                test_size=0.3, random_state=42):
     '''
     input:
               df: pandas dataframe
               response: string of response name [optional argument that could be used for naming variables or index y column]
-              drop_cols: columns to drop from the data frame before any further engineering
+              drop_cols: list of columns to drop from the data frame before any further engineering
+              test_size: float, size of a test set
+              random_state: int, random seed
 
     output:
               X_train: X training data
@@ -100,7 +104,17 @@ def perform_feature_engineering(df, response, drop_cols=None):
               y_train: y training data
               y_test: y testing data
     '''
-    pass
+    all_to_drop = [response]
+    if drop_cols is not None:
+        all_to_drop += drop_cols
+        
+    y = df[response].copy()
+    X = df.drop(all_to_drop, axis=1)
+    
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=test_size, random_state=random_state)
+    
+    return X_train, X_test, y_train, y_test
 
 
 def classification_report_image(y_train,
@@ -170,3 +184,6 @@ if __name__ == '__main__':
         'Card_Category'
     ]
     churn_data = encoder_helper(churn_data, cat_columns, 'Churn')
+    
+    columns_to_drop = ['Unnamed: 0', 'CLIENTNUM', 'Attrition_Flag']
+    perform_feature_engineering(churn_data, 'Churn', drop_cols=columns_to_drop)
