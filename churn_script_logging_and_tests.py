@@ -76,11 +76,21 @@ def test_encoder_helper(encoder_helper, df):
         raise err
 
 
-def test_perform_feature_engineering(perform_feature_engineering):
+def test_perform_feature_engineering(perform_feature_engineering, df):
     '''
     test perform_feature_engineering
     '''
-    pass
+    # test for returning exactly four objects
+    datasets = perform_feature_engineering(
+        df, 'Churn', ['Unnamed: 0', 'CLIENTNUM', 'Attrition_Flag'])
+    try:
+        assert len(datasets) == 4
+        logging.info("Testing perform_feature_engineering: SUCCESS, four objects returned")
+    except AssertionError as err:
+        logging.error("Testing perform_feature_engineering: Four objects required to be returned")
+        raise err
+    
+    # test for comparing dimensions of X and y with original df
 
 
 def test_train_models(train_models):
@@ -97,3 +107,4 @@ if __name__ == "__main__":
         lambda val: 0 if val == "Existing Customer" else 1)
     test_eda(cls.perform_eda, churn_data)
     test_encoder_helper(cls.encoder_helper, churn_data)
+    test_perform_feature_engineering(cls.perform_feature_engineering, churn_data)
