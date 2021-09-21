@@ -58,7 +58,7 @@ def perform_eda(df, cat_col, qnt_col, corr_heatmap=True):
         plt.close()
 
 
-def encoder_helper(df, category_lst, response):
+def encoder_helper(df, category_lst, response, drop_cat=True):
     '''
     helper function to turn each categorical column into a new column with
     propotion of churn for each category - associated with cell 15 from the notebook
@@ -67,6 +67,7 @@ def encoder_helper(df, category_lst, response):
             df: pandas dataframe
             category_lst: list of columns that contain categorical features
             response: string of response name [optional argument that could be used for naming variables or index y column]
+            drop_cat: if True, original categorical columns are dropped from the data frame
 
     output:
             df: pandas dataframe with new column for each categorical feature
@@ -80,14 +81,18 @@ def encoder_helper(df, category_lst, response):
 
         df['{}_{}'.format(col, response)] = col_lst
     
+    if drop_cat:
+        df.drop(category_lst, axis=1, inplace=True)
+    
     return df
 
 
-def perform_feature_engineering(df, response):
+def perform_feature_engineering(df, response, drop_cols=None):
     '''
     input:
               df: pandas dataframe
               response: string of response name [optional argument that could be used for naming variables or index y column]
+              drop_cols: columns to drop from the data frame before any further engineering
 
     output:
               X_train: X training data
