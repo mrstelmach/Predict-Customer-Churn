@@ -69,9 +69,18 @@ def encoder_helper(df, category_lst, response):
             response: string of response name [optional argument that could be used for naming variables or index y column]
 
     output:
-            df: pandas dataframe with new columns for
+            df: pandas dataframe with new column for each categorical feature
     '''
-    pass
+    for col in category_lst:
+        col_lst = []
+        col_groups = df.groupby(col).mean()[response]
+
+        for val in df[col]:
+            col_lst.append(col_groups.loc[val])
+
+        df['{}_{}'.format(col, response)] = col_lst
+    
+    return df
 
 
 def perform_feature_engineering(df, response):
@@ -144,5 +153,15 @@ if __name__ == '__main__':
     churn_data = import_data("./data/bank_data.csv")
     churn_data['Churn'] = churn_data['Attrition_Flag'].apply(
         lambda val: 0 if val == "Existing Customer" else 1)
+    
     perform_eda(df=churn_data, cat_col='Marital_Status', 
                 qnt_col='Customer_Age', corr_heatmap=True)
+    
+    cat_columns = [
+        'Gender',
+        'Education_Level',
+        'Marital_Status',
+        'Income_Category',
+        'Card_Category'
+    ]
+    churn_data = encoder_helper(churn_data, cat_columns, 'Churn')
