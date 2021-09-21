@@ -38,11 +38,10 @@ def test_import(import_data):
         raise err
 
 
-def test_eda(perform_eda):
+def test_eda(perform_eda, df):
     '''
     test perform eda function
     '''
-    df = cls.import_data("./data/bank_data.csv")
     try:
         perform_eda(df, 'Marital_Status', 'Customer_Age', 
                     corr_heatmap=True)
@@ -54,11 +53,27 @@ def test_eda(perform_eda):
         raise err
 
 
-def test_encoder_helper(encoder_helper):
+def test_encoder_helper(encoder_helper, df):
     '''
     test encoder helper
     '''
-    pass
+    cat_columns = [
+        'Gender',
+        'Education_Level',
+        'Marital_Status',
+        'Income_Category',
+        'Card_Category'
+    ]
+    try:
+        df = encoder_helper(df, cat_columns, 'Churn')
+        assert all(['{}_{}'.format(col, 'Churn') 
+                    in df.columns for col in cat_columns])
+        logging.info("Testing encoder_helper: SUCCESS")
+    except AssertionError as err:
+        msg = ("Testing encoder_helper: Encoded categorical "
+               + "columns not available in data frame")
+        logging.error(msg)
+        raise err
 
 
 def test_perform_feature_engineering(perform_feature_engineering):
@@ -77,4 +92,8 @@ def test_train_models(train_models):
 
 if __name__ == "__main__":
     test_import(cls.import_data)
-    test_eda(cls.perform_eda)
+    churn_data = cls.import_data("./data/bank_data.csv")
+    churn_data['Churn'] = churn_data['Attrition_Flag'].apply(
+        lambda val: 0 if val == "Existing Customer" else 1)
+    test_eda(cls.perform_eda, churn_data)
+    test_encoder_helper(cls.encoder_helper, churn_data)
