@@ -7,9 +7,9 @@ Author: Marek Stelmach
 Date: Spetember, 2021
 """
 
-import joblib
 import os
 
+import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
