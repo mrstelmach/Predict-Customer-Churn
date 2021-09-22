@@ -11,6 +11,7 @@ import joblib
 import os
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
@@ -204,11 +205,12 @@ def feature_importance_plot(model, X_data, output_pth):
     indices = np.argsort(importances)[::-1]
     feature_names = [X_data.columns[i] for i in indices]
     
-    plt.figure(figsize=(20,5))
+    plt.figure(figsize=(20, 10))
     plt.title("Feature Importance")
     plt.ylabel('Importance')
     plt.bar(range(X_data.shape[1]), importances[indices])
     plt.xticks(range(X_data.shape[1]), feature_names, rotation=90)
+    plt.tight_layout()
     plt.savefig(output_pth)
     plt.close()
 
