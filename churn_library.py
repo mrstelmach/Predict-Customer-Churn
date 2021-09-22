@@ -15,7 +15,7 @@ import pandas as pd
 import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, plot_roc_curve
 from sklearn.model_selection import GridSearchCV, train_test_split
 
 os.environ['QT_QPA_PLATFORM']='offscreen'
@@ -167,6 +167,28 @@ def classification_report_image(y_train,
     plt.close()
 
 
+def roc_curve_plot(estimator1, estimator2, X, y, output_pth):
+    '''
+    produces a roc curve comparison plot for two estimators provided
+    input:
+            estimator1: first estimator object
+            estimator2: second estimator object
+            X: pandas data frame with features
+            y: response values
+            output_pth: path to store the figure
+
+    output:
+             None
+    '''
+    est1_plot = plot_roc_curve(estimator1, X, y)
+    plt.figure(figsize=(15, 8))
+    ax = plt.gca()
+    est2_disp = plot_roc_curve(estimator2, X, y, ax=ax, alpha=0.8)
+    est1_plot.plot(ax=ax, alpha=0.8)
+    plt.savefig(output_pth)
+    plt.close()
+
+
 def feature_importance_plot(model, X_data, output_pth):
     '''
     creates and stores the feature importances in pth
@@ -238,6 +260,10 @@ def train_models(X_train, X_test, y_train, y_test):
     )
     
     # produce roc curve plot
+    roc_curve_plot(
+        lrc, cv_rfc.best_estimator_, X_test, y_test, 
+        './images/results/roc_curve.png'
+    )
 
 
 if __name__ == '__main__':
