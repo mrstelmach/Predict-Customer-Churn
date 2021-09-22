@@ -121,11 +121,31 @@ def test_perform_feature_engineering(perform_feature_engineering, df):
     return X_train, X_test, y_train, y_test
 
 
-def test_train_models(train_models):
+def test_train_models(train_models, X_train, X_test, y_train, y_test):
     '''
     test train_models
     '''
-    pass
+    train_models(X_train, X_test, y_train, y_test)
+    
+    model_files = os.listdir('./models')
+    try:
+        assert all([file in model_files for file 
+                    in ['rf_model.pkl', 'lr_model.pkl']])
+        logging.info("Testing test_train_models: SUCCESS, all models found")
+    except AssertionError as err:
+        logging.error("Testing test_train_models: Incomplete models list")
+        raise err
+    
+    result_files = os.listdir('./images/results')
+    try:
+        assert all([file in result_files for file 
+                    in ['classification_report.png',
+                        'feature_importance.png',
+                        'roc_curve.png']])
+        logging.info("Testing test_train_models: SUCCESS, all results files found")
+    except AssertionError as err:
+        logging.error("Testing test_train_models: Incomplete results list")
+        raise err
 
 
 if __name__ == "__main__":
@@ -137,3 +157,4 @@ if __name__ == "__main__":
     churn_data = test_encoder_helper(cls.encoder_helper, churn_data)
     X_train, X_test, y_train, y_test = test_perform_feature_engineering(
         cls.perform_feature_engineering, churn_data)
+    test_train_models(cls.train_models, X_train, X_test, y_train, y_test)
