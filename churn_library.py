@@ -8,12 +8,14 @@ Date: Spetember, 2021
 """
 
 import os
-os.environ['QT_QPA_PLATFORM']='offscreen'
 
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
+from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
+
+os.environ['QT_QPA_PLATFORM']='offscreen'
 
 
 def import_data(pth):
@@ -137,7 +139,31 @@ def classification_report_image(y_train,
     output:
              None
     '''
-    pass
+    plt.figure(figsize=(10, 5))
+    cr_train = classification_report(y_train, y_train_preds_rf, output_dict=True)
+    cr_test = classification_report(y_test, y_test_preds_rf, output_dict=True)
+    plt.subplot(1, 2, 1)
+    plt.title('Random Forest train results')
+    sns.heatmap(pd.DataFrame(cr_train).iloc[:-1, :].T, annot=True)
+    plt.subplot(1, 2, 2)
+    plt.title('Random Forest test results')
+    sns.heatmap(pd.DataFrame(cr_test).iloc[:-1, :].T, annot=True)
+    plt.tight_layout()
+    plt.savefig('./images/results/rf_result.png')
+    plt.close()
+    
+    plt.figure(figsize=(10, 5))
+    cr_train = classification_report(y_train, y_train_preds_lr, output_dict=True)
+    cr_test = classification_report(y_test, y_test_preds_lr, output_dict=True)
+    plt.subplot(1, 2, 1)
+    plt.title('Logistic Regression train results')
+    sns.heatmap(pd.DataFrame(cr_train).iloc[:-1, :].T, annot=True)
+    plt.subplot(1, 2, 2)
+    plt.title('Logistic Regression test results')
+    sns.heatmap(pd.DataFrame(cr_test).iloc[:-1, :].T, annot=True)
+    plt.tight_layout()
+    plt.savefig('./images/results/lr_result.png')
+    plt.close()
 
 
 def feature_importance_plot(model, X_data, output_pth):
