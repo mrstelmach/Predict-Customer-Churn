@@ -7,13 +7,16 @@ Author: Marek Stelmach
 Date: Spetember, 2021
 """
 
+import joblib
 import os
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV, train_test_split
 
 os.environ['QT_QPA_PLATFORM']='offscreen'
 
@@ -199,7 +202,42 @@ def train_models(X_train, X_test, y_train, y_test):
     output:
               None
     '''
-    pass
+    # train estimators and save best models
+    rfc = RandomForestClassifier(random_state=42)
+    lrc = LogisticRegression()
+    param_grid = {
+        'n_estimators': [200, 500],
+        'max_features': ['auto', 'sqrt'],
+        'max_depth' : [4, 5, 100],
+        'criterion' :['gini', 'entropy']
+    }
+    cv_rfc = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=5)
+    cv_rfc.fit(X_train, y_train)
+    lrc.fit(X_train, y_train)
+    joblib.dump(cv_rfc.best_estimator_, './models/rf_model.pkl')
+    joblib.dump(lrc, './models/lr_model.pkl')
+    
+    # get train and test predictions
+    y_train_preds_rf = cv_rfc.best_estimator_.predict(X_train)
+    y_test_preds_rf = cv_rfc.best_estimator_.predict(X_test)
+    y_train_preds_lr = lrc.predict(X_train)
+    y_test_preds_lr = lrc.predict(X_test)
+    
+    # produce classification report
+    classification_report_image(
+        y_train, y_test,
+        y_train_preds_lr, y_train_preds_rf,
+        y_test_preds_lr, y_test_preds_rf,
+        './images/results/classification_report.png'
+    )
+    
+    # produce feature importance plot
+    feature_importance_plot(
+        cv_rfc.best_estimator_, X_train, 
+        './images/results/feature_importance.png'
+    )
+    
+    # produce roc curve plot
 
 
 if __name__ == '__main__':
@@ -222,3 +260,4 @@ if __name__ == '__main__':
     columns_to_drop = ['Unnamed: 0', 'CLIENTNUM', 'Attrition_Flag']
     X_train, X_test, y_train, y_test = perform_feature_engineering(
         churn_data, 'Churn', drop_cols=columns_to_drop)
+    train_models(X_train, X_test, y_train, y_test)
