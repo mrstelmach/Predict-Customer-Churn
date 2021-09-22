@@ -76,6 +76,8 @@ def test_encoder_helper(encoder_helper, df):
                + "columns not available in data frame")
         logging.error(msg)
         raise err
+        
+    return df
 
 
 def test_perform_feature_engineering(perform_feature_engineering, df):
@@ -115,6 +117,8 @@ def test_perform_feature_engineering(perform_feature_engineering, df):
     except AssertionError as err:
         logging.error("Testing perform_feature_engineering: Incorrect shape of X")
         raise err
+        
+    return X_train, X_test, y_train, y_test
 
 
 def test_train_models(train_models):
@@ -130,7 +134,6 @@ if __name__ == "__main__":
     churn_data['Churn'] = churn_data['Attrition_Flag'].apply(
         lambda val: 0 if val == "Existing Customer" else 1)
     test_eda(cls.perform_eda, churn_data)
-    test_encoder_helper(cls.encoder_helper, churn_data)
-    test_perform_feature_engineering(cls.perform_feature_engineering, churn_data)
-    X_train, X_test, y_train, y_test = cls.perform_feature_engineering(
-        churn_data, 'Churn', ['Unnamed: 0', 'CLIENTNUM', 'Attrition_Flag'])
+    churn_data = test_encoder_helper(cls.encoder_helper, churn_data)
+    X_train, X_test, y_train, y_test = test_perform_feature_engineering(
+        cls.perform_feature_engineering, churn_data)
