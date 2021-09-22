@@ -124,10 +124,11 @@ def classification_report_image(y_train,
                                 y_train_preds_lr,
                                 y_train_preds_rf,
                                 y_test_preds_lr,
-                                y_test_preds_rf):
+                                y_test_preds_rf,
+                                output_pth):
     '''
     produces classification report for training and testing results and stores report as image
-    in images folder
+    in output_pth
     input:
             y_train: training response values
             y_test:  test response values
@@ -135,6 +136,7 @@ def classification_report_image(y_train,
             y_train_preds_rf: training predictions from random forest
             y_test_preds_lr: test predictions from logistic regression
             y_test_preds_rf: test predictions from random forest
+            output_pth: path to store the figure
 
     output:
              None
@@ -158,7 +160,7 @@ def classification_report_image(y_train,
     plt.title('Logistic Regression test results')
     sns.heatmap(pd.DataFrame(cr_test_lr).iloc[:-1, :].T, annot=True)
     plt.tight_layout()
-    plt.savefig('./images/results/results.png')
+    plt.savefig(output_pth)
     plt.close()
 
 
@@ -173,7 +175,17 @@ def feature_importance_plot(model, X_data, output_pth):
     output:
              None
     '''
-    pass
+    importances = model.feature_importances_
+    indices = np.argsort(importances)[::-1]
+    feature_names = [X_data.columns[i] for i in indices]
+    
+    plt.figure(figsize=(20,5))
+    plt.title("Feature Importance")
+    plt.ylabel('Importance')
+    plt.bar(range(X_data.shape[1]), importances[indices])
+    plt.xticks(range(X_data.shape[1]), feature_names, rotation=90)
+    plt.savefig(output_pth)
+    plt.close()
 
 
 def train_models(X_train, X_test, y_train, y_test):
