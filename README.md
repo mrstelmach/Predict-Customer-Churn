@@ -36,4 +36,4 @@ python churn_library.py
 This will produce the following results:
 1. EDA results for sample variables in `images/eda/` folder
 2. Two model objects (LR and RF) available in `models/` folder
-3. Model evaluation in 'images/results/' (ROC curve and classification report) with additional feature importance plot
+3. Model evaluation in `images/results/` (ROC curve and classification report) with additional feature importance plot
