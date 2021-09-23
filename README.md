@@ -25,7 +25,7 @@ pip install -r requirements.txt
 Project workflow has been tested with **Python 3.6.3**.
 
 ## Running Files
-To run tests and reproduce results from `logs/churn_library.log` run the follwing:
+To test functions and reproduce results from `logs/churn_library.log` run the follwing:
 ```
 python churn_script_logging_and_tests.py
 ```
